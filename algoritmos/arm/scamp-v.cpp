@@ -94,12 +94,12 @@ static inline uint64_t get_first_mask(svbool_t mask, svbool_t vl) {
 #define STORE_SI(a, b, vl) svst1_u64(vl, a, b)
 
 // Performs the fused multiply-add operation: calculates (a * b + c)
-#define FMADD_PD(a, b, c, vl) svmla_f64_z(vl, c, a, b)
+#define FMADD_PD(a, b, c, vl) svmla_f64_x(vl, c, a, b)
 
 // Element-wise sum, subtraction, and multiplication of two double vectors
-#define ADD_PD(a, b, vl) svadd_f64_z(vl, a, b)
-#define SUB_PD(a, b, vl) svsub_f64_z(vl, a, b)
-#define MUL_PD(a, b, vl) svmul_f64_z(vl, a, b)
+#define ADD_PD(a, b, vl) svadd_f64_x(vl, a, b)
+#define SUB_PD(a, b, vl) svsub_f64_x(vl, a, b)
+#define MUL_PD(a, b, vl) svmul_f64_x(vl, a, b)
 
 // Element-wise comparison of two double vectors: greater than
 #define CMP_PD_GT(a, b, vl) svcmpgt_f64(vl,a, b)

@@ -87,13 +87,13 @@ static inline uint64_t get_first_mask(svbool_t mask, svbool_t vl) {
 #define STORE_PD(a, b, vl) svst1_f64(vl, a, b)
 #define STORE_SI(a, b, vl) svst1_u64(vl, a, b)
 //  performs multiply-add of two vectors and stores it in a third one
-#define FMADD_PD(a, b, c, vl) svmla_f64_z(vl, c, a, b)
-#define FMSUB_PD(a,b,c, vl) svsub_f64_z(vl, svmul_f64_z(vl, a, b), c)
+#define FMADD_PD(a, b, c, vl) svmla_f64_x(vl, c, a, b)
+#define FMSUB_PD(a,b,c, vl) svsub_f64_x(vl, svmul_f64_x(vl, a, b), c)
 // sum, subtraction, and multiplication of two vectors
-#define SUB_PD(a, b, vl) svsub_f64_z(vl, a, b)
-#define ADD_PD(a, b, vl) svadd_f64_z(vl, a, b)
-#define MUL_PD(a, b, vl) svmul_f64_z(vl, a, b)
-#define DIV_PD(a, b, vl) svdiv_f64_z(vl, a, b)
+#define SUB_PD(a, b, vl) svsub_f64_x(vl, a, b)
+#define ADD_PD(a, b, vl) svadd_f64_x(vl, a, b)
+#define MUL_PD(a, b, vl) svmul_f64_x(vl, a, b)
+#define DIV_PD(a, b, vl) svdiv_f64_x(vl, a, b)
 // Compares two vectors element by element (a less than b) and returns a mask with 1s in elements that satisfy the condition
 #define CMP_PD_LT(a, b, vl) svcmplt_f64(vl,a, b)
 // Compares two vectors element by element (a equal to b - scalar duplicated)
@@ -218,7 +218,7 @@ void scrimp(DTYPE *tSeries, vector<ITYPE> &idx,
       // Gets the first value of the resulting vector by applying the minimum between the correlation vector and the profile at position i+myoffset
       DTYPE corr_max = REDMIN_PD(distance_v, profile_tmp[i + my_offset], vlOuter);
       VMTYPE mask = CMP_PD_EQ(distance_v, corr_max, vlOuter);
-      long index_max = GETFIRST_MASK(mask, vlInner);
+      long index_max = GETFIRST_MASK(mask, vlOuter);
 
       if(index_max != -1) {
         profile_tmp[i + my_offset] = corr_max;
