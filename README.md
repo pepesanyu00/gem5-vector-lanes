@@ -90,5 +90,4 @@ All experiments, testing, and validation of the vector lanes model were performe
 
 ### 5. Configuration Scripts and Evaluation Workloads
 - [`gem5_config_riscv.py`](gem5_config_riscv.py) and [`gem5_config_arm.py`](gem5_config_arm.py): Configuration scripts to run full vector workloads with customizable lane counts on RISC-V and ARM.
-- [`algoritmos/`](algoritmos/): Workload implementations (SCAMP, SCAMP-V, SCRIMP, SCRIMP-V) for ARM and RISC-V evaluation.
 - [`stats_analisis/`](stats_analisis/): Collected execution statistics from algorithm runs.
