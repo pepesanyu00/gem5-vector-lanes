@@ -1,99 +1,94 @@
-# The gem5 Simulator
+# Building gem5 for RISC-V and ARM
 
-This is the repository for the gem5 simulator. It contains the full source code
-for the simulator and all tests and regressions.
+Instructions for building the gem5 simulator configured for RISC-V and ARM architectures.
 
-The gem5 simulator is a modular platform for computer-system architecture
-research, encompassing system-level architecture as well as processor
-microarchitecture. It is primarily used to evaluate new hardware designs,
-system software changes, and compile-time and run-time system optimizations.
+## Prerequisites & Dependencies
 
-The main website can be found at <http://www.gem5.org>.
+The following tools and dependencies are required to build gem5:
+- C++ Compiler: `g++` (>= 10) or `clang` (>= 11)
+- Python 3 and headers (`python3-dev`)
+- SCons
+- zlib, m4, protobuf
 
-## Testing status
+On Ubuntu/Debian-based distributions, install them with:
+```bash
+sudo apt update
+sudo apt install build-essential git m4 scons zlib1g zlib1g-dev \
+    libprotobuf-dev protobuf-compiler libprotoc-dev libgoogle-perftools-dev \
+    python3-dev python-is-python3 libboost-all-dev
+```
 
-**Note**: These regard tests run on the develop branch of gem5:
-<https://github.com/gem5/gem5/tree/develop>.
+---
 
-[![Daily Tests](https://github.com/gem5/gem5/actions/workflows/daily-tests.yaml/badge.svg?branch=develop)](https://github.com/gem5/gem5/actions/workflows/daily-tests.yaml)
-[![Weekly Tests](https://github.com/gem5/gem5/actions/workflows/weekly-tests.yaml/badge.svg?branch=develop)](https://github.com/gem5/gem5/actions/workflows/weekly-tests.yaml)
-[![Compiler Tests](https://github.com/gem5/gem5/actions/workflows/compiler-tests.yaml/badge.svg?branch=develop)](https://github.com/gem5/gem5/actions/workflows/compiler-tests.yaml)
+## Compilation
 
-## Getting started
+### Build for RISC-V
 
-A good starting point is <http://www.gem5.org/about>, and for
-more information about building the simulator and getting started
-please see <http://www.gem5.org/documentation> and
-<http://www.gem5.org/documentation/learning_gem5/introduction>.
+To compile the optimized gem5 binary for the RISC-V architecture:
 
-## Building gem5
+```bash
+scons build/RISCV/gem5.opt -j $(nproc)
+```
 
-To build gem5, you will need the following software: g++ or clang,
-Python (gem5 links in the Python interpreter), SCons, zlib, m4, and lastly
-protobuf if you want trace capture and playback support. Please see
-<http://www.gem5.org/documentation/general_docs/building> for more details
-concerning the minimum versions of these tools.
+The resulting executable will be located at `build/RISCV/gem5.opt`.
 
-Once you have all dependencies resolved, execute
-`scons build/ALL/gem5.opt` to build an optimized version of the gem5 binary
-(`gem5.opt`) containing all gem5 ISAs. If you only wish to compile gem5 to
-include a single ISA, you can replace `ALL` with the name of the ISA. Valid
-options include `ARM`, `NULL`, `MIPS`, `POWER`, `RISCV`, `SPARC`, and `X86`
-The complete list of options can be found in the build_opts directory.
+---
 
-See https://www.gem5.org/documentation/general_docs/building for more
-information on building gem5.
+### Build for ARM
 
-## The Source Tree
+To compile the optimized gem5 binary for the ARM architecture:
 
-The main source tree includes these subdirectories:
+```bash
+scons build/ARM/gem5.opt -j $(nproc)
+```
 
-* build_opts: pre-made default configurations for gem5
-* build_tools: tools used internally by gem5's build process.
-* configs: example simulation configuration scripts
-* ext: less-common external packages needed to build gem5
-* include: include files for use in other programs
-* site_scons: modular components of the build system
-* src: source code of the gem5 simulator. The C++ source, Python wrappers, and Python standard library are found in this directory.
-* system: source for some optional system software for simulated systems
-* tests: regression tests
-* util: useful utility programs and files
+The resulting executable will be located at `build/ARM/gem5.opt`.
 
-## gem5 Resources
+---
 
-To run full-system simulations, you may need compiled system firmware, kernel
-binaries and one or more disk images, depending on gem5's configuration and
-what type of workload you're trying to run. Many of these resources can be
-obtained from <https://resources.gem5.org>.
+### Additional Notes
+- The `-j $(nproc)` flag enables parallel compilation using all available CPU cores to speed up build times.
+- If additional debug symbols are required, replace `.opt` with `.debug` or `.fast` (e.g., `build/RISCV/gem5.debug`).
 
-More information on gem5 Resources can be found at
-<https://www.gem5.org/documentation/general_docs/gem5_resources/>.
+---
 
-## Getting Help, Reporting bugs, and Requesting Features
+## gem5 Extensions and Modifications (Vector Lanes Model)
 
-We provide a variety of channels for users and developers to get help, report
-bugs, requests features, or engage in community discussions. Below
-are a few of the most common we recommend using.
+Location of files modified and added for the vector lanes extension plan, indicating what was changed and its purpose:
 
-* **GitHub Discussions**: A GitHub Discussions page. This can be used to start
-discussions or ask questions. Available at
-<https://github.com/orgs/gem5/discussions>.
-* **GitHub Issues**: A GitHub Issues page for reporting bugs or requesting
-features. Available at <https://github.com/gem5/gem5/issues>.
-* **Jira Issue Tracker**: A Jira Issue Tracker for reporting bugs or requesting
-features. Available at <https://gem5.atlassian.net/>.
-* **Slack**: A Slack server with a variety of channels for the gem5 community
-to engage in a variety of discussions. Please visit
-<https://www.gem5.org/join-slack> to join.
-* **gem5-users@gem5.org**: A mailing list for users of gem5 to ask questions
-or start discussions. To join the mailing list please visit
-<https://www.gem5.org/mailing_lists>.
-* **gem5-dev@gem5.org**: A mailing list for developers of gem5 to ask questions
-or start discussions. To join the mailing list please visit
-<https://www.gem5.org/mailing_lists>.
+### 1. Processor Core (O3CPU - ISA-Agnostic)
+- [`src/cpu/static_inst.hh`](src/cpu/static_inst.hh): Virtual method `numChimePasses(ThreadContext *tc)` in `StaticInst` to compute the number of passes (*chimes*) based on configured vector lanes.
+- [`src/cpu/o3/dyn_inst.hh`](src/cpu/o3/dyn_inst.hh): Forwarding method `numChimePasses()` in `DynInst` querying chime passes via the thread context.
+- [`src/cpu/o3/inst_queue.cc`](src/cpu/o3/inst_queue.cc): Scheduling adjustments in `scheduleReadyInsts()` to scale completion latency and functional unit (FU) occupancy when `passes > 1`.
+- [`src/cpu/o3/FuncUnitConfig.py`](src/cpu/o3/FuncUnitConfig.py): Realistic execution latencies for SIMD and vector functional units.
 
-## Contributing to gem5
+### 2. RISC-V Vector (RVV) Support
+- [`src/arch/riscv/RiscvISA.py`](src/arch/riscv/RiscvISA.py): `lanes` parameter and `RiscvVectorLanes` parameter type definition.
+- [`src/arch/riscv/isa.hh`](src/arch/riscv/isa.hh) and [`src/arch/riscv/isa.cc`](src/arch/riscv/isa.cc): Storage, `getNumVecLanes()` accessor, and validation for the `lanes` parameter.
+- [`src/arch/riscv/insts/vector.hh`](src/arch/riscv/insts/vector.hh) and [`src/arch/riscv/insts/vector.cc`](src/arch/riscv/insts/vector.cc): Override of `numChimePasses()` in `VectorMicroInst` computing passes from `microVl` and configured `lanes`.
 
-We hope you enjoy using gem5. When appropriate we advise sharing your
-contributions to the project. <https://www.gem5.org/contributing> can help you
-get started. Additional information can be found in the CONTRIBUTING.md file.
+### 3. ARM SVE Support
+- [`src/arch/arm/ArmISA.py`](src/arch/arm/ArmISA.py) and [`src/arch/arm/ArmSystem.py`](src/arch/arm/ArmSystem.py): `sve_lanes_se` (SE mode) and `sve_lanes` (FS mode) parameters, along with the `SveVectorLanes` parameter type.
+- [`src/arch/arm/isa.hh`](src/arch/arm/isa.hh), [`src/arch/arm/isa.cc`](src/arch/arm/isa.cc), [`src/arch/arm/system.hh`](src/arch/arm/system.hh), and [`src/arch/arm/system.cc`](src/arch/arm/system.cc): Storage, accessors (`getNumSveLanes()`, `sveLanes()`), and system-wide propagation of `sve_lanes`.
+- [`src/arch/arm/insts/static_inst.hh`](src/arch/arm/insts/static_inst.hh) and [`src/arch/arm/insts/static_inst.cc`](src/arch/arm/insts/static_inst.cc): Helper function `numSveChimePasses(ThreadContext *tc, unsigned eCount)` for SVE chime computation.
+- [`src/arch/arm/isa/templates/sve.isa`](src/arch/arm/isa/templates/sve.isa) and [`src/arch/arm/isa/templates/sve_mem.isa`](src/arch/arm/isa/templates/sve_mem.isa): Overrides of `numChimePasses()` across SVE arithmetic and memory instruction templates.
+
+### 4. Testing and Validation Environment
+All experiments, testing, and validation of the vector lanes model were performed in [`util/vector_lanes_bench/`](util/vector_lanes_bench/):
+- **Assembly Microbenchmarks**:
+  - `bench_vector_lanes.S` and `Makefile`: Latency and throughput microbenchmarks for RISC-V RVV (`chain` and `indep` modes, varying `SEW` and `LMUL`).
+  - `bench_sve_lanes.S` and `Makefile_sve`: Latency and throughput microbenchmarks for ARM SVE (`chain` and `indep` modes, 8-bit, 32-bit, and 64-bit element sizes).
+- **Simulation and Automation Scripts**:
+  - `run_lanes_bench.py`: gem5 configuration script for RISC-V simulation with L1/L2 caches.
+  - `run_sve_lanes_bench.py`: gem5 configuration script for ARM SVE simulation with L1/L2 caches.
+  - `run_all_benchmarks.sh`: Automated compilation and execution script for the entire microbenchmark suite.
+- **Analytical Models and Documentation**:
+  - `expected_cycles.py` and `expected_cycles_sve.py`: Analytical cycle predictors used to verify simulation results against theoretical formulas.
+  - `MICROBENCH_GUIDE.md`: Guide for compiling and running the microbenchmarks.
+  - `REPORT.md`: Detailed validation report and empirical results analysis.
+  - `results/`: Directory containing generated simulation outputs and statistics (`stats.txt`, `config.ini`).
+
+### 5. Configuration Scripts and Evaluation Workloads
+- [`gem5_config_riscv.py`](gem5_config_riscv.py) and [`gem5_config_arm.py`](gem5_config_arm.py): Configuration scripts to run full vector workloads with customizable lane counts on RISC-V and ARM.
+- [`algoritmos/`](algoritmos/): Workload implementations (SCAMP, SCAMP-V, SCRIMP, SCRIMP-V) for ARM and RISC-V evaluation.
+- [`stats_analisis/`](stats_analisis/): Collected execution statistics from algorithm runs.

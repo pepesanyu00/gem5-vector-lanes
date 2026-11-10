@@ -2096,7 +2096,7 @@
                                 "enable_Zicboz_fs": true,
                                 "enable_rvv": true,
                                 "eventq_index": 0,
-                                "lanes": 4,
+                                "lanes": 8,
                                 "privilege_mode_set": "MSU",
                                 "riscv_type": "RV64",
                                 "vlen": 512,
@@ -2293,16 +2293,16 @@
                                 "name": "workload",
                                 "path": "board.processor.cores.core.workload",
                                 "cmd": [
-                                    "/home/jsanchez/gem5/util/vector_lanes_bench/build/bench_sew8_lmul4_indep"
+                                    "/mnt/home/users/ac/pepesy00/gem5/util/vector_lanes_bench/build/bench_sew8_lmul4_indep"
                                 ],
-                                "cwd": "/home/jsanchez/gem5/util/vector_lanes_bench",
+                                "cwd": "/mnt/home/users/ac/pepesy00/gem5/util/vector_lanes_bench",
                                 "drivers": [],
                                 "egid": 100,
                                 "env": [],
                                 "errout": "cerr",
                                 "euid": 100,
                                 "eventq_index": 0,
-                                "executable": "/home/jsanchez/gem5/util/vector_lanes_bench/build/bench_sew8_lmul4_indep",
+                                "executable": "/mnt/home/users/ac/pepesy00/gem5/util/vector_lanes_bench/build/bench_sew8_lmul4_indep",
                                 "gid": 100,
                                 "input": "cin",
                                 "kvmInSE": false,

@@ -2147,7 +2147,7 @@
                                     ]
                                 },
                                 "sme_vl_se": 1,
-                                "sve_lanes_se": 4,
+                                "sve_lanes_se": 8,
                                 "sve_vl_se": 4,
                                 "system": "board"
                             }
@@ -2503,16 +2503,16 @@
                                 "name": "workload",
                                 "path": "board.processor.cores.core.workload",
                                 "cmd": [
-                                    "/home/jsanchez/gem5/util/vector_lanes_bench/build_sve/bench_sve_elem8_indep"
+                                    "/mnt/home/users/ac/pepesy00/gem5/util/vector_lanes_bench/build_sve/bench_sve_elem8_indep"
                                 ],
-                                "cwd": "/home/jsanchez/gem5/util/vector_lanes_bench",
+                                "cwd": "/mnt/home/users/ac/pepesy00/gem5/util/vector_lanes_bench",
                                 "drivers": [],
                                 "egid": 100,
                                 "env": [],
                                 "errout": "cerr",
                                 "euid": 100,
                                 "eventq_index": 0,
-                                "executable": "/home/jsanchez/gem5/util/vector_lanes_bench/build_sve/bench_sve_elem8_indep",
+                                "executable": "/mnt/home/users/ac/pepesy00/gem5/util/vector_lanes_bench/build_sve/bench_sve_elem8_indep",
                                 "gid": 100,
                                 "input": "cin",
                                 "kvmInSE": false,
